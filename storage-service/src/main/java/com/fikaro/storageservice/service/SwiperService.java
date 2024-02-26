@@ -1,6 +1,7 @@
 package com.fikaro.storageservice.service;
 
 import com.fikaro.storageservice.dto.SwiperImagesDto;
+import com.fikaro.storageservice.entity.ImageData;
 import com.fikaro.storageservice.entity.SwiperImagesEtt;
 import com.fikaro.storageservice.repository.SwiperRepository;
 import com.fikaro.storageservice.util.ImageUtils;
@@ -8,11 +9,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,8 +25,8 @@ public class SwiperService {
     @Autowired
     private SwiperRepository swiperRepository;
 
-    public List<SwiperImagesDto> getAllSwiper(){
-        List<SwiperImagesEtt> swiperImagesList = swiperRepository.findAll();
+    public List<SwiperImagesDto> getAllSwiperByOrder(){
+        List<SwiperImagesEtt> swiperImagesList = swiperRepository.findAllByOrderByDisplayOrderAsc();
         return swiperImagesList.stream().map(this::mapModelToResponse).toList();
 
     }
@@ -40,6 +43,11 @@ public class SwiperService {
                 .build());
 
         return "file uploaded successfully : " + file.getOriginalFilename();
+    }
+
+    public byte[] downloadImage(String fileName){
+        Optional<SwiperImagesEtt> dbImage = swiperRepository.findByName(fileName);
+        return ImageUtils.decompressImage(dbImage.get().getImageData());
     }
 
     public void swapOrder(Long entryId, int moveDir){
