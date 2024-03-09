@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,10 +30,17 @@ public class SwiperController {
 
 
     @PostMapping
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-        String uploadImage = swiperService.uploadImage(file);
+    public ResponseEntity<?> uploadImage(@RequestParam("image") List<MultipartFile> files) throws IOException {
+
+        List<String> resultList = new ArrayList<>();
+
+        for (MultipartFile file : files ) {
+            String uploadImage = swiperService.uploadImage(file);
+            resultList.add(uploadImage);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(uploadImage);
+                .body(resultList);
     }
 
     @GetMapping("/{fileName}")
@@ -42,7 +50,6 @@ public class SwiperController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
                 .body(imageData);
-
     }
 
     @PostMapping("/swapOrder/{entryId}/{moveDir}")
