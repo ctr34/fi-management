@@ -39,6 +39,10 @@ public class SwiperController {
             resultList.add(uploadImage);
         }
 
+        if (resultList.stream().anyMatch(result -> result.startsWith("Error"))) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultList);
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(resultList);
     }
@@ -56,5 +60,17 @@ public class SwiperController {
     @ResponseStatus(HttpStatus.OK)
     public void swapOrder(@PathVariable Long entryId, @PathVariable int moveDir) {
         swiperService.swapOrder(entryId, moveDir);
+    }
+
+    @DeleteMapping
+    @ResponseBody
+    public ResponseEntity<?> deleteImageById(Long id) {
+        boolean deleted = swiperService.deleteImageById(id);
+
+        if (deleted) {
+            return ResponseEntity.status(HttpStatus.OK).body("Image deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Image not found");
+        }
     }
 }

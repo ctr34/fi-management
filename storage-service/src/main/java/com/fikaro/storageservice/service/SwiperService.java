@@ -33,6 +33,11 @@ public class SwiperService {
 
     public String uploadImage(MultipartFile file) throws IOException {
 
+        Optional<SwiperImagesEtt> existingSwiper = swiperRepository.findByName(file.getOriginalFilename());
+        if(existingSwiper.isPresent()){
+            return "Error: Image with the same name already exists!";
+        }
+
         int amount = swiperRepository.customCount();
 
         swiperRepository.save(SwiperImagesEtt.builder()
@@ -76,6 +81,18 @@ public class SwiperService {
         } else {
             log.warn("Could not find entry with ID {}", entryId);
         }
+    }
+
+    public boolean deleteImageById(Long id){
+        Optional<SwiperImagesEtt> optionalImageData = swiperRepository.findById(id);
+
+        if (optionalImageData.isPresent()) {
+            // Delete from the database
+            swiperRepository.deleteById(id);
+            return true;
+        }
+
+        return false;
     }
 
     private SwiperImagesDto mapModelToResponse(SwiperImagesEtt swiperImagesEtt){
