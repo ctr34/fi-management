@@ -1,6 +1,6 @@
 package com.fikaro.storageservice.controller;
 
-import com.fikaro.storageservice.dto.Images;
+import com.fikaro.storageservice.dto.ProductImagesDto;
 import com.fikaro.storageservice.service.ImageService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class ImagesController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Images> getAllProduct(){
+    public List<ProductImagesDto> getAllProduct(){
         log.info("hit getAllProduct");
         return imageService.getALlImages();
     }

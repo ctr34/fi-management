@@ -1,8 +1,6 @@
 package com.fikaro.storageservice.repository;
 
-import com.fikaro.storageservice.entity.ImageData;
 import com.fikaro.storageservice.entity.SwiperImagesEtt;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

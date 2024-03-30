@@ -1,7 +1,7 @@
 package com.fikaro.storageservice.service;
 
-import com.fikaro.storageservice.dto.Images;
-import com.fikaro.storageservice.entity.ImageData;
+import com.fikaro.storageservice.dto.ProductImagesDto;
+import com.fikaro.storageservice.entity.ProductImageEtt;
 import com.fikaro.storageservice.repository.ImageRepository;
 import com.fikaro.storageservice.util.ImageUtils;
 import jakarta.transaction.Transactional;
@@ -26,7 +26,7 @@ public class ImageService {
 
     public String uploadImage(MultipartFile file) throws IOException {
 
-        ImageData imageData = imageRepository.save(ImageData.builder()
+        ProductImageEtt imageData = imageRepository.save(ProductImageEtt.builder()
                 .name(file.getOriginalFilename())
                 .type(file.getContentType())
                 .imageData(ImageUtils.compressImage(file.getBytes())).build());
@@ -37,17 +37,17 @@ public class ImageService {
     }
 
     public byte[] downloadImage(String fileName){
-        Optional<ImageData> dbImage = imageRepository.findByName(fileName);
+        Optional<ProductImageEtt> dbImage = imageRepository.findByName(fileName);
         return ImageUtils.decompressImage(dbImage.get().getImageData());
     }
 
-    public List<Images> getALlImages(){
-        List<ImageData> imageDataList = imageRepository.findAll();
+    public List<ProductImagesDto> getALlImages(){
+        List<ProductImageEtt> imageDataList = imageRepository.findAll();
         return imageDataList.stream().map(this::mapModelToResponse).toList();
     }
 
     public boolean deleteImageById(Long id){
-        Optional<ImageData> optionalImageData = imageRepository.findById(id);
+        Optional<ProductImageEtt> optionalImageData = imageRepository.findById(id);
 
         if (optionalImageData.isPresent()) {
             // Delete from the database
@@ -58,8 +58,8 @@ public class ImageService {
         return false;
     }
 
-    private Images mapModelToResponse(ImageData imageData){
-        return Images.builder()
+    private ProductImagesDto mapModelToResponse(ProductImageEtt imageData){
+        return ProductImagesDto.builder()
                 .id(imageData.getId())
                 .name(imageData.getName())
                 .type(imageData.getType())

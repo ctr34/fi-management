@@ -1,7 +1,6 @@
 package com.fikaro.storageservice.service;
 
 import com.fikaro.storageservice.dto.SwiperImagesDto;
-import com.fikaro.storageservice.entity.ImageData;
 import com.fikaro.storageservice.entity.SwiperImagesEtt;
 import com.fikaro.storageservice.repository.SwiperRepository;
 import com.fikaro.storageservice.util.ImageUtils;
@@ -9,7 +8,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
