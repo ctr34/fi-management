@@ -26,11 +26,10 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-//    public List<ProductDto> getAllProducts(){
-//        List<ProductEtt> productEttList = productRepository.findAll();
-//        return productEttList.stream().map(this::mapModelToResponse).toList();
-//
-//    }
+    public List<ProductDto> getAllProducts(){
+        List<ProductEtt> productEttList = productRepository.findAll();
+        return productEttList.stream().map(this::mapModelToResponse).toList();
+    }
 
     public String saveProduct(String name, int size, String description, List<MultipartFile> imageFiles) throws IOException {
 
@@ -64,18 +63,12 @@ public class ProductService {
         return "file uploaded successfully!";
     }
 
-//    public byte[] downloadImage(String fileName){
-//        Optional<ProductEtt> dbImage = productRepository.findByName(fileName);
-//        return ImageUtils.decompressImage(dbImage.get().getImages());
-//    }
-
-//    private ProductDto mapModelToResponse(ProductEtt productEtt){
-//        return ProductDto.builder()
-//                .id(productEtt.getId())
-//                .name(productEtt.getName())
-//                .size(productEtt.getSize())
-//                .description(productEtt.getDescription())
-//                .imageData(productEtt.getImageData())
-//                .build();
-//    }
+    private ProductDto mapModelToResponse(ProductEtt productEtt){
+        return ProductDto.builder()
+                .id(productEtt.getId())
+                .name(productEtt.getName())
+                .size(productEtt.getSize())
+                .description(productEtt.getDescription())
+                .build();
+    }
 }

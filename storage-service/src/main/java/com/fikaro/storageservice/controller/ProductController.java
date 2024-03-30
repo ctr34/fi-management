@@ -20,11 +20,11 @@ public class ProductController {
 
     private final ProductService productService;
 
-//    @GetMapping
-//    @ResponseStatus(HttpStatus.OK)
-//    public List<ProductDto> getAllProducts() {
-//        return productService.getAllProducts();
-//    }
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProductDto> getAllProducts() {
+        return productService.getAllProducts();
+    }
 
     @PostMapping
     public ResponseEntity<?> addNewProduct(@RequestParam("name") String name,
