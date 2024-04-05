@@ -1,7 +1,7 @@
 package com.fikaro.storageservice.controller;
 
 import com.fikaro.storageservice.dto.ProductImagesDto;
-import com.fikaro.storageservice.service.ImageService;
+import com.fikaro.storageservice.service.ProductImageService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,30 +14,34 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/images")
+@RequestMapping("/api/productImages")
 @AllArgsConstructor
 @Slf4j
-public class ImagesController {
-    private final ImageService imageService;
+public class ProductImagesController {
+    private final ProductImageService productImageService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductImagesDto> getAllProduct(){
+    public List<ProductImagesDto> getAllImages(){
         log.info("hit getAllProduct");
-        return imageService.getALlImages();
+        return productImageService.getALlImages();
     }
 
-    @PostMapping
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-        String uploadImage = imageService.uploadImage(file);
+    @PostMapping("/byId")
+    public List<ProductImagesDto> getAllImagesById(@RequestParam("product_id") Long id){
+        return productImageService.getALlImagesById(id);
+    }
+
+    @PostMapping("/uploadImage")
+    public ResponseEntity<?> uploadProductImage(@RequestParam("file") MultipartFile file) throws IOException {
+        Long uploadImageId = productImageService.uploadImage(file);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(uploadImage);
+                .body(uploadImageId);
     }
 
-    @GetMapping("/{fileName}")
-    public ResponseEntity<?> downloadImage(@PathVariable String fileName){
-        log.info("hit downloadImage");
-        byte[] imageData=imageService.downloadImage(fileName);
+    @GetMapping("getFirstImage/{id}")
+    public ResponseEntity<?> getFirstImage(@PathVariable Long id){
+        byte[] imageData= productImageService.getFirstImage(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
                 .body(imageData);
@@ -47,7 +51,7 @@ public class ImagesController {
     @DeleteMapping
     @ResponseBody
     public ResponseEntity<?> deleteImageById(Long id) {
-        boolean deleted = imageService.deleteImageById(id);
+        boolean deleted = productImageService.deleteImageById(id);
 
         if (deleted) {
             return ResponseEntity.status(HttpStatus.OK).body("Image deleted successfully");

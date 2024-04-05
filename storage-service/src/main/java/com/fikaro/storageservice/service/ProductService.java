@@ -4,6 +4,7 @@ import com.fikaro.storageservice.dto.ProductDto;
 import com.fikaro.storageservice.dto.ProductImagesDto;
 import com.fikaro.storageservice.entity.ProductEtt;
 import com.fikaro.storageservice.entity.ProductImageEtt;
+import com.fikaro.storageservice.entity.SwiperImagesEtt;
 import com.fikaro.storageservice.repository.ProductRepository;
 import com.fikaro.storageservice.util.ImageUtils;
 import jakarta.transaction.Transactional;
@@ -27,6 +28,7 @@ public class ProductService {
     private ProductRepository productRepository;
 
     public List<ProductDto> getAllProducts(){
+        log.info("getAllProducts");
         List<ProductEtt> productEttList = productRepository.findAll();
         return productEttList.stream().map(this::mapModelToResponse).toList();
     }
@@ -61,6 +63,19 @@ public class ProductService {
         productRepository.save(productEtt);
 
         return "file uploaded successfully!";
+    }
+
+    public boolean deleteImageById(Long id){
+
+        try {
+            productRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+
+            log.error("Product with id {} not found", id);
+        }
+
+        return false;
     }
 
     private ProductDto mapModelToResponse(ProductEtt productEtt){

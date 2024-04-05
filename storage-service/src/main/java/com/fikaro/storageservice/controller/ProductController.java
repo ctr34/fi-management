@@ -42,12 +42,16 @@ public class ProductController {
                 .body(addProduct);
     }
 
-//    @GetMapping("/{fileName}")
-//    public ResponseEntity<?> downloadImage(@PathVariable String fileName){
-//        log.info("hit downloadImage");
-//        byte[] imageData=productService.downloadImage(fileName);
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .contentType(MediaType.valueOf("image/png"))
-//                .body(imageData);
-//    }
+    @DeleteMapping
+    @ResponseBody
+    public ResponseEntity<?> deleteImageById(Long id) {
+        boolean deleted = productService.deleteImageById(id);
+
+        if (deleted) {
+            return ResponseEntity.status(HttpStatus.OK).body("Image deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Image not found");
+        }
+    }
+
 }

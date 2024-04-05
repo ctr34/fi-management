@@ -1,8 +1,10 @@
 package com.fikaro.storageservice.service;
 
 import com.fikaro.storageservice.dto.ProductImagesDto;
+import com.fikaro.storageservice.dto.SwiperImagesDto;
 import com.fikaro.storageservice.entity.ProductImageEtt;
-import com.fikaro.storageservice.repository.ImageRepository;
+import com.fikaro.storageservice.entity.SwiperImagesEtt;
+import com.fikaro.storageservice.repository.ProductImageRepository;
 import com.fikaro.storageservice.util.ImageUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,31 +21,34 @@ import java.util.Optional;
 @Transactional
 @Slf4j
 @RequiredArgsConstructor
-public class ImageService {
+public class ProductImageService {
 
     @Autowired
-    private ImageRepository imageRepository;
+    private ProductImageRepository imageRepository;
 
-    public String uploadImage(MultipartFile file) throws IOException {
+    public Long uploadImage(MultipartFile file) throws IOException {
 
-        ProductImageEtt imageData = imageRepository.save(ProductImageEtt.builder()
+        ProductImageEtt productImageEtt = imageRepository.save(ProductImageEtt.builder()
                 .name(file.getOriginalFilename())
                 .type(file.getContentType())
                 .imageData(ImageUtils.compressImage(file.getBytes())).build());
-        if (imageData != null) {
-            return "file uploaded successfully : " + file.getOriginalFilename();
-        }
-        return null;
+
+        return productImageEtt.getId();
     }
 
-    public byte[] downloadImage(String fileName){
-        Optional<ProductImageEtt> dbImage = imageRepository.findByName(fileName);
+    public byte[] getFirstImage(Long id){
+        Optional<ProductImageEtt> dbImage = imageRepository.findByProduct_Id(id).stream().findFirst();
         return ImageUtils.decompressImage(dbImage.get().getImageData());
     }
 
     public List<ProductImagesDto> getALlImages(){
-        List<ProductImageEtt> imageDataList = imageRepository.findAll();
-        return imageDataList.stream().map(this::mapModelToResponse).toList();
+        List<ProductImageEtt> productImageEttList = imageRepository.findAll();
+        return productImageEttList.stream().map(this::mapModelToResponse).toList();
+    }
+
+    public List<ProductImagesDto> getALlImagesById(Long productId){
+        List<ProductImageEtt> productImageEttList = imageRepository.findByProduct_Id(productId);
+        return productImageEttList.stream().map(this::mapModelToResponse).toList();
     }
 
     public boolean deleteImageById(Long id){
