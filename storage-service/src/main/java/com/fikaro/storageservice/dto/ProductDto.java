@@ -16,5 +16,4 @@ public class ProductDto {
     private String name;
     private int size; //6 inches or others
     private String description;
-    private List<ProductImagesDto> images;
 }

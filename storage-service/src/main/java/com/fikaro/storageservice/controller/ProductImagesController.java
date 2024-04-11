@@ -27,6 +27,12 @@ public class ProductImagesController {
         return productImageService.getALlImages();
     }
 
+    @GetMapping("getImageIds/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Long> getImagesIdByProductId(@PathVariable Long id){
+        return productImageService.getImagesIdByProductId(id);
+    }
+
     @PostMapping("/byId")
     public List<ProductImagesDto> getAllImagesById(@RequestParam("product_id") Long id){
         return productImageService.getALlImagesById(id);
@@ -45,7 +51,14 @@ public class ProductImagesController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
                 .body(imageData);
+    }
 
+    @GetMapping("getImageById/{id}")
+    public ResponseEntity<?> getImageById(@PathVariable Long id){
+        byte[] imageData= productImageService.getImageById(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.valueOf("image/png"))
+                .body(imageData);
     }
 
     @DeleteMapping

@@ -41,9 +41,18 @@ public class ProductImageService {
         return ImageUtils.decompressImage(dbImage.get().getImageData());
     }
 
+    public byte[] getImageById(Long id){
+        Optional<ProductImageEtt> dbImage = imageRepository.findById(id);
+        return ImageUtils.decompressImage(dbImage.get().getImageData());
+    }
+
     public List<ProductImagesDto> getALlImages(){
         List<ProductImageEtt> productImageEttList = imageRepository.findAll();
         return productImageEttList.stream().map(this::mapModelToResponse).toList();
+    }
+
+    public List<Long> getImagesIdByProductId(Long id){
+        return imageRepository.findImageIds(id);
     }
 
     public List<ProductImagesDto> getALlImagesById(Long productId){
