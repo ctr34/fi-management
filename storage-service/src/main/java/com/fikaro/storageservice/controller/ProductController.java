@@ -1,7 +1,9 @@
 package com.fikaro.storageservice.controller;
 
 import com.fikaro.storageservice.dto.ProductDto;
+import com.fikaro.storageservice.service.ProductImageService;
 import com.fikaro.storageservice.service.ProductService;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductImageService productImageService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -44,13 +47,16 @@ public class ProductController {
 
     @DeleteMapping
     @ResponseBody
-    public ResponseEntity<?> deleteImageById(Long id) {
-        boolean deleted = productService.deleteImageById(id);
+    @Transactional
+    public ResponseEntity<?> deleteProductById(Long id) {
+        boolean productDeleted = productService.deleteProductById(id);
+//        boolean imagesDeleted = productImageService.deleteImageByProductId(id);
 
-        if (deleted) {
-            return ResponseEntity.status(HttpStatus.OK).body("Image deleted successfully");
+//        if (productDeleted && imagesDeleted) {
+        if (productDeleted) {
+            return ResponseEntity.status(HttpStatus.OK).body("Product and images deleted successfully");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Image not found");
+            throw new RuntimeException("Failed to delete product and images");
         }
     }
 

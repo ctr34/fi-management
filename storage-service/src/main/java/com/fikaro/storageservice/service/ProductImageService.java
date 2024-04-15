@@ -2,9 +2,11 @@ package com.fikaro.storageservice.service;
 
 import com.fikaro.storageservice.dto.ProductImagesDto;
 import com.fikaro.storageservice.dto.SwiperImagesDto;
+import com.fikaro.storageservice.entity.ProductEtt;
 import com.fikaro.storageservice.entity.ProductImageEtt;
 import com.fikaro.storageservice.entity.SwiperImagesEtt;
 import com.fikaro.storageservice.repository.ProductImageRepository;
+import com.fikaro.storageservice.repository.ProductRepository;
 import com.fikaro.storageservice.util.ImageUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +27,21 @@ public class ProductImageService {
 
     @Autowired
     private ProductImageRepository imageRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
-    public Long uploadImage(MultipartFile file) throws IOException {
+    public Long uploadImageWithProductId(Long productId, MultipartFile file) throws IOException {
 
-        ProductImageEtt productImageEtt = imageRepository.save(ProductImageEtt.builder()
+        Optional<ProductEtt> productEtt = productRepository.findById(productId);
+
+        if (productEtt.isEmpty()) {
+            return null;
+        }
+        ProductImageEtt savedImage = imageRepository.save(ProductImageEtt.builder()
                 .name(file.getOriginalFilename())
                 .type(file.getContentType())
-                .imageData(ImageUtils.compressImage(file.getBytes())).build());
-
-        return productImageEtt.getId();
+                .imageData(ImageUtils.compressImage(file.getBytes())).product(productEtt.get()).build());
+        return savedImage.getId();
     }
 
     public byte[] getFirstImage(Long id){
@@ -60,13 +68,14 @@ public class ProductImageService {
         return productImageEttList.stream().map(this::mapModelToResponse).toList();
     }
 
-    public boolean deleteImageById(Long id){
-        Optional<ProductImageEtt> optionalImageData = imageRepository.findById(id);
+    public boolean deleteImageByProductId(Long id){
 
-        if (optionalImageData.isPresent()) {
-            // Delete from the database
-            imageRepository.deleteById(id);
+        try {
+            imageRepository.deleteByProduct_Id(id);
             return true;
+        } catch (Exception e) {
+
+            log.error("Image with id {} not found", id);
         }
 
         return false;

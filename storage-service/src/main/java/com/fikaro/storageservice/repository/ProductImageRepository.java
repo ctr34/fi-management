@@ -13,6 +13,8 @@ public interface ProductImageRepository extends JpaRepository<ProductImageEtt, L
 
     List<ProductImageEtt> findByProduct_Id(Long productId);
 
-    @Query("SELECT e.id FROM ProductImageEtt e")
-    List<Long> findImageIds(Long id);
+    void deleteByProduct_Id(Long productId);
+
+    @Query("SELECT e.id FROM ProductImageEtt e WHERE e.product.id=:productId")
+    List<Long> findImageIds(Long productId);
 }

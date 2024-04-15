@@ -65,7 +65,7 @@ public class ProductService {
         return "file uploaded successfully!";
     }
 
-    public boolean deleteImageById(Long id){
+    public boolean deleteProductById(Long id){
 
         try {
             productRepository.deleteById(id);
