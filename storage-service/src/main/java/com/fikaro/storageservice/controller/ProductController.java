@@ -1,6 +1,6 @@
 package com.fikaro.storageservice.controller;
 
-import com.fikaro.storageservice.dto.ProductDto;
+import com.fikaro.storageservice.dto.ProductInfoDto;
 import com.fikaro.storageservice.service.ProductImageService;
 import com.fikaro.storageservice.service.ProductService;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductDto> getAllProducts() {
+    public List<ProductInfoDto> getAllProducts() {
         return productService.getAllProducts();
     }
 
@@ -36,13 +36,18 @@ public class ProductController {
                                            @RequestParam("images") List<MultipartFile> images) throws IOException {
 
         String addProduct = productService.saveProduct(name, size, description, images);
-
         if (addProduct.startsWith("Error")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(addProduct);
         }
-
         return  ResponseEntity.status(HttpStatus.OK)
                 .body(addProduct);
+    }
+
+    @PostMapping("/updateProduct")
+    public ResponseEntity<?> updateProduct(@RequestBody ProductInfoDto productInfoDto){
+        String updateRes = productService.updateProduct(productInfoDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(updateRes);
     }
 
     @DeleteMapping
@@ -50,9 +55,6 @@ public class ProductController {
     @Transactional
     public ResponseEntity<?> deleteProductById(Long id) {
         boolean productDeleted = productService.deleteProductById(id);
-//        boolean imagesDeleted = productImageService.deleteImageByProductId(id);
-
-//        if (productDeleted && imagesDeleted) {
         if (productDeleted) {
             return ResponseEntity.status(HttpStatus.OK).body("Product and images deleted successfully");
         } else {

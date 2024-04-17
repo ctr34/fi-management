@@ -9,12 +9,13 @@ import java.util.Optional;
 
 public interface ProductImageRepository extends JpaRepository<ProductImageEtt, Long> {
 
-    Optional<ProductImageEtt> findByName(String filename);
-
     List<ProductImageEtt> findByProduct_Id(Long productId);
 
     void deleteByProduct_Id(Long productId);
 
     @Query("SELECT e.id FROM ProductImageEtt e WHERE e.product.id=:productId")
     List<Long> findImageIds(Long productId);
+
+    @Query("SELECT COUNT(e) FROM ProductImageEtt e WHERE e.product.id=:productId")
+    int countByProductId(Long productId);
 }

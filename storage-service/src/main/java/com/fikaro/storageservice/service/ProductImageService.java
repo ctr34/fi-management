@@ -68,10 +68,14 @@ public class ProductImageService {
         return productImageEttList.stream().map(this::mapModelToResponse).toList();
     }
 
-    public boolean deleteImageByProductId(Long id){
+    public int getNumImagesByProductId(Long productId){
+        return imageRepository.countByProductId(productId);
+    }
+
+    public boolean deleteImageById(Long id){
 
         try {
-            imageRepository.deleteByProduct_Id(id);
+            imageRepository.deleteById(id);
             return true;
         } catch (Exception e) {
 

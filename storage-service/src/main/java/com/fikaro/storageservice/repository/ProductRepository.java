@@ -14,4 +14,6 @@ public interface ProductRepository extends JpaRepository<ProductEtt, Long> {
     @Query("SELECT COUNT(e) FROM ProductEtt e")
     int customCount(); // Use int as the return type
 
+
+
 }

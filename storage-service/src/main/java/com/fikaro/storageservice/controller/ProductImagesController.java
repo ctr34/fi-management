@@ -66,10 +66,16 @@ public class ProductImagesController {
                 .body(imageData);
     }
 
+    @GetMapping("/getNumImagesByProductId")
+    public int getNumImagesByProductId(@RequestParam("product_id") Long productId){
+
+        return productImageService.getNumImagesByProductId(productId);
+    }
+
     @DeleteMapping
     @ResponseBody
     public ResponseEntity<?> deleteImageById(Long id) {
-        boolean deleted = productImageService.deleteImageByProductId(id);
+        boolean deleted = productImageService.deleteImageById(id);
 
         if (deleted) {
             return ResponseEntity.status(HttpStatus.OK).body("Image deleted successfully");

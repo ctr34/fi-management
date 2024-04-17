@@ -1,7 +1,7 @@
 package com.fikaro.storageservice.service;
 
-import com.fikaro.storageservice.dto.ProductDto;
 import com.fikaro.storageservice.dto.ProductImagesDto;
+import com.fikaro.storageservice.dto.ProductInfoDto;
 import com.fikaro.storageservice.entity.ProductEtt;
 import com.fikaro.storageservice.entity.ProductImageEtt;
 import com.fikaro.storageservice.entity.SwiperImagesEtt;
@@ -27,7 +27,7 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public List<ProductDto> getAllProducts(){
+    public List<ProductInfoDto> getAllProducts(){
         log.info("getAllProducts");
         List<ProductEtt> productEttList = productRepository.findAll();
         return productEttList.stream().map(this::mapModelToResponse).toList();
@@ -65,6 +65,20 @@ public class ProductService {
         return "file uploaded successfully!";
     }
 
+    public String updateProduct(ProductInfoDto productInfoDto){
+        Optional<ProductEtt> existingProduct = productRepository.findById(productInfoDto.getId());
+
+        if(existingProduct.isEmpty()) return "The product does not exist!";
+
+        ProductEtt productEtt = existingProduct.get();
+        productEtt.setName(productInfoDto.getName());
+        productEtt.setSize(productInfoDto.getSize());
+        productEtt.setDescription(productInfoDto.getDescription());
+        productRepository.save(productEtt);
+
+        return "Successfully updated the product!";
+    }
+
     public boolean deleteProductById(Long id){
 
         try {
@@ -78,8 +92,8 @@ public class ProductService {
         return false;
     }
 
-    private ProductDto mapModelToResponse(ProductEtt productEtt){
-        return ProductDto.builder()
+    private ProductInfoDto mapModelToResponse(ProductEtt productEtt){
+        return ProductInfoDto.builder()
                 .id(productEtt.getId())
                 .name(productEtt.getName())
                 .size(productEtt.getSize())
